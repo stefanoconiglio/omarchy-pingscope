@@ -20,7 +20,9 @@ Item {
   function sample() {
     if (!active || host === "" || busy || pingProc.running) return
     busy = true
-    pingProc.command = ["ping", ipVersion === 6 ? "-6" : "-4", "-n", "-c", "1", "-W", "1", host]
+    // `--` keeps a configuration value beginning with "-" from being
+    // interpreted as another ping option.
+    pingProc.command = ["ping", ipVersion === 6 ? "-6" : "-4", "-n", "-c", "1", "-W", "1", "--", host]
     pingProc.running = true
   }
 

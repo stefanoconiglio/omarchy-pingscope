@@ -20,8 +20,8 @@ PingScope is a self-contained bar widget that displays current ICMP latency for 
 
 ### Submission checklist
 
-- [ ] The repository is public and contains installation and removal instructions.
-- [ ] I have documented the plugin license and any external dependencies.
+- [x] The repository is public and contains installation and removal instructions.
+- [x] I have documented the plugin license and any external dependencies.
 - [ ] I confirm that I own or have permission to submit this plugin and its preview assets.
-- [ ] The plugin does not overwrite user configuration without explicit consent.
+- [x] The plugin does not overwrite user configuration without explicit consent.
 - [ ] I understand that approval is for listing and is not a security review.
