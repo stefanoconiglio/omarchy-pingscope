@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "pingscope.latency",
+  "name": "PingScope",
+  "version": "1.4.0",
+  "author": "PingScope Project",
+  "license": "MIT",
+  "description": "Current ICMP latency for up to four websites, colored green, yellow, or red by response time.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "PingScope",
+    "description": "Current latency for up to four sites, colored by response time.",
+    "category": "Network",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "sites": ["google.com", "github.com", "cloudflare.com", "reddit.com"],
+      "focusedSite": 0,
+      "closedRefreshSec": 1,
+      "openRefreshSec": 1,
+      "ipVersion": 4,
+      "running": true
+    },
+    "schema": [
+      {
+        "key": "sites",
+        "type": "string",
+        "label": "Sites",
+        "description": "Up to four hostnames (comma or space separated in shell.json). Normally edited from the widget's panel.",
+        "defaultValue": "google.com, github.com, cloudflare.com, reddit.com"
+      },
+      {
+        "key": "focusedSite",
+        "type": "integer",
+        "label": "Focused site index",
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "defaultValue": 0
+      },
+      {
+        "key": "closedRefreshSec",
+        "type": "integer",
+        "label": "Closed refresh interval (seconds)",
+        "min": 1,
+        "max": 60,
+        "step": 1,
+        "defaultValue": 1
+      },
+      {
+        "key": "openRefreshSec",
+        "type": "integer",
+        "label": "Open refresh interval (seconds)",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "defaultValue": 1
+      },
+      {
+        "key": "ipVersion",
+        "type": "integer",
+        "label": "IP version",
+        "min": 4,
+        "max": 6,
+        "step": 2,
+        "defaultValue": 4
+      },
+      {
+        "key": "running",
+        "type": "boolean",
+        "label": "Run probes",
+        "defaultValue": true
+      }
+    ]
+  }
+}
