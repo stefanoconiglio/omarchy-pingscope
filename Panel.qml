@@ -25,7 +25,12 @@ Panel {
   readonly property bool vertical: bar ? bar.vertical : false
   readonly property int barSize: bar ? bar.barSize : Style.bar.sizeHorizontal
 
+  // The transparent bar chooses this dynamically from the wallpaper. Popup
+  // content must use the popup palette instead: its card keeps the theme's
+  // popup background even when the wallpaper makes barForeground go dark.
   readonly property color foreground: bar ? bar.barForeground : Color.foreground
+  readonly property color popupForeground: Color.popups.text
+  readonly property color popupMuted: Qt.darker(popupForeground, 1.4)
   readonly property color urgent: bar ? bar.urgent : Color.urgent
   readonly property color accent: Color.accent
   readonly property color muted: Qt.darker(foreground, 1.4)
@@ -83,12 +88,12 @@ Panel {
 
   // ---------- presentation helpers ----------
 
-  function statusColor(status) {
+  function statusColor(status, normalColor, idleColor) {
     if (status === "bad" || status === "down") return badLatency
     if (status === "warning") return warningLatency
     if (status === "good") return goodLatency
-    if (status === "idle") return muted
-    return foreground
+    if (status === "idle") return idleColor
+    return normalColor
   }
 
   function faceLabel() {
@@ -294,7 +299,7 @@ Panel {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             text: root.faceLabel()
-            color: root.statusColor(root.focusedStatus)
+            color: root.statusColor(root.focusedStatus, root.foreground, root.muted)
             font.family: root.fontFamily
             font.pixelSize: Style.font.caption
           }
@@ -318,7 +323,7 @@ Panel {
         Text {
           anchors.horizontalCenter: parent.horizontalCenter
           text: root.faceLabel()
-          color: root.statusColor(root.focusedStatus)
+          color: root.statusColor(root.focusedStatus, root.foreground, root.muted)
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
         }
@@ -387,13 +392,13 @@ Panel {
             width: parent.width
             title: "PingScope"
             meta: root.panelMeta()
-            foreground: root.foreground
+            foreground: root.popupForeground
             fontFamily: root.fontFamily
 
             iconComponent: Component {
               Text {
                 text: root.glyph
-                color: root.foreground
+                color: root.popupForeground
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.display
               }
@@ -403,7 +408,7 @@ Panel {
               PanelActionButton {
                 iconText: "󰑖"
                 tooltipText: "Refresh (R)"
-                foreground: root.foreground
+                foreground: root.popupForeground
                 hoverColor: root.accent
                 fontFamily: root.fontFamily
                 onClicked: root.sampleAll()
@@ -411,7 +416,7 @@ Panel {
             }
           }
 
-          PanelSeparator { foreground: root.foreground }
+          PanelSeparator { foreground: root.popupForeground }
 
           SectionHeading {
             title: "CONTROLS"
@@ -427,7 +432,7 @@ Panel {
               text: root.ipVersion === 4 ? "IPv4 → IPv6" : "IPv6 → IPv4"
               tooltipText: root.ipVersion === 4 ? "Switch probes to IPv6" : "Switch probes to IPv4"
               bordered: true
-              foreground: root.foreground
+              foreground: root.popupForeground
               accent: root.accent
               fontFamily: root.fontFamily
               fontSize: Style.font.bodySmall
@@ -439,7 +444,7 @@ Panel {
               text: root.probesRunning ? "Stop" : "Start"
               tooltipText: root.probesRunning ? "Stop all ping probes" : "Start all ping probes"
               bordered: true
-              foreground: root.probesRunning ? root.urgent : root.foreground
+              foreground: root.probesRunning ? root.urgent : root.popupForeground
               accent: root.probesRunning ? root.urgent : root.accent
               fontFamily: root.fontFamily
               fontSize: Style.font.bodySmall
@@ -450,13 +455,13 @@ Panel {
           Text {
             width: parent.width
             text: "Controls apply immediately — Save is only for site changes."
-            color: root.muted
+            color: root.popupMuted
             font.family: root.fontFamily
             font.pixelSize: Style.font.caption
             wrapMode: Text.WordWrap
           }
 
-          PanelSeparator { foreground: root.foreground }
+          PanelSeparator { foreground: root.popupForeground }
 
           // ---------- live status ----------
 
@@ -522,7 +527,7 @@ Panel {
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 text: siteRow.modelData
-                color: siteRow.index === root.focusedSite ? root.accent : root.foreground
+                color: siteRow.index === root.focusedSite ? root.accent : root.popupForeground
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.bodySmall
                 font.bold: true
@@ -542,7 +547,7 @@ Panel {
                 text: !root.probesRunning ? "stopped" : siteRow.pinger && siteRow.pinger.hasSample
                   ? Model.formatMs(siteRow.pinger.latencyMs)
                   : "checking…"
-                color: root.statusColor(siteRow.status)
+                color: root.statusColor(siteRow.status, root.popupForeground, root.popupMuted)
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.bodySmall
                 font.bold: true
@@ -556,13 +561,13 @@ Panel {
             width: parent.width
             visible: root.sites.length === 0
             text: "No sites configured — add up to four below."
-            color: root.muted
+            color: root.popupMuted
             font.family: root.fontFamily
             font.pixelSize: Style.font.bodySmall
             wrapMode: Text.WordWrap
           }
 
-          PanelSeparator { foreground: root.foreground }
+          PanelSeparator { foreground: root.popupForeground }
 
           // ---------- configuration ----------
 
@@ -584,7 +589,7 @@ Panel {
               TextField {
                 id: hostField
                 width: parent.width - removeButton.width - parent.spacing
-                foreground: root.foreground
+                foreground: root.popupForeground
                 accent: root.accent
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.bodySmall
@@ -605,7 +610,7 @@ Panel {
                 iconText: "󰀍"
                 tooltipText: "Remove site"
                 bordered: true
-                foreground: root.foreground
+                foreground: root.popupForeground
                 accent: root.accent
                 fontFamily: root.fontFamily
                 fontSize: Style.font.bodySmall
@@ -644,7 +649,7 @@ Panel {
             width: parent.width
             visible: root.sites.length > 0
             text: "Sites that block ICMP will show as down — swap them here anytime. Right-click the bar widget to cycle the focused site."
-            color: root.muted
+            color: root.popupMuted
             font.family: root.fontFamily
             font.pixelSize: Style.font.caption
             wrapMode: Text.WordWrap
@@ -667,7 +672,7 @@ Panel {
       id: headingText
       text: title
       textFormat: Text.PlainText
-      foreground: root.foreground
+      foreground: root.popupForeground
       fontFamily: root.fontFamily
       elide: Text.ElideRight
       anchors.left: parent.left
@@ -680,7 +685,7 @@ Panel {
       id: valueText
       text: value
       visible: text !== ""
-      color: root.muted
+      color: root.popupMuted
       font.family: root.fontFamily
       font.pixelSize: Style.font.caption
       font.bold: true
@@ -697,7 +702,7 @@ Panel {
     property int index: -1
 
     bordered: true
-    foreground: root.foreground
+    foreground: root.popupForeground
     fontFamily: root.fontFamily
     fontSize: Style.font.bodySmall
     iconSize: Style.font.icon

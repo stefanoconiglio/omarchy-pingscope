@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "pingscope.latency",
   "name": "PingScope",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "author": "PingScope Project",
   "license": "MIT",
   "description": "Current ICMP latency for up to four websites, colored green, yellow, or red by response time.",
