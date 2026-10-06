@@ -302,7 +302,7 @@ Panel {
       id: pill
       anchors.centerIn: parent
       width: Math.ceil(widest.width) + Style.space(14)
-      height: Math.ceil(pillLabel.implicitHeight) + Style.space(4)
+      height: Math.min(root.barSize - Style.space(2), Math.ceil(pillLabel.implicitHeight) + Style.space(2))
       radius: height / 2
       color: root.pillFill
       border.width: Math.max(1, Math.round(Style.space(1.5)))
@@ -314,7 +314,7 @@ Panel {
         text: root.barLabel()
         color: root.statusColor(root.focusedStatus, root.pillText, root.pillMuted)
         font.family: root.fontFamily
-        font.pixelSize: Style.font.caption
+        font.pixelSize: Style.font.title
         font.bold: true
       }
     }

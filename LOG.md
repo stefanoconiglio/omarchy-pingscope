@@ -37,3 +37,11 @@ stand out whatever the theme: a background, with a border.
 - Checked on the live bar (light theme, screenshots): google.com "3 ms" green; time.nist.gov
   "143 ms" red; 192.0.2.1 "no net" red; same width each time; back to google.com. Not seen on a
   dark theme.
+
+## 2026-10-06 18:00 CEST — Bigger number
+
+Request (user): a bigger font for the latency in the pill. `Style.font.title` (14 px) instead of
+`caption` (10 px; the bar's other text is `body`, 12 px); the pill's vertical padding down to
+`Style.space(2)` and its height capped at the bar's size minus 2 so it fits the 26 px bar.
+Checked on the live bar after `omarchy restart shell`: "3 ms" green and "142 ms" red
+(time.nist.gov) inside the bar's height.
