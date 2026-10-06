@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "pingscope.latency",
-  "name": "PingScope",
+  "id": "io.github.stefanoconiglio.pingscope",
+  "name": "PingScope (pill)",
   "version": "1.4.2",
-  "author": "PingScope Project",
+  "author": "PingScope Project; plain bar face by Stefano Coniglio",
   "license": "MIT",
-  "description": "Current ICMP latency for up to four websites, colored green, yellow, or red by response time.",
+  "description": "Fork of PingScope: the bar shows the latency in green, yellow or red on a dark pill outlined in the bar's text colour, readable on every theme; the panel is unchanged.",
   "kinds": [
     "bar-widget"
   ],
@@ -13,13 +13,15 @@
     "barWidget": "Panel.qml"
   },
   "barWidget": {
-    "displayName": "PingScope",
-    "description": "Current latency for up to four sites, colored by response time.",
+    "displayName": "PingScope (pill)",
+    "description": "Latency to the focused site, coloured by response time, on a dark outlined pill.",
     "category": "Network",
     "allowMultiple": false,
     "defaultSection": "right",
     "defaults": {
-      "sites": ["google.com", "github.com", "cloudflare.com", "reddit.com"],
+      "sites": [
+        "google.com"
+      ],
       "focusedSite": 0,
       "closedRefreshSec": 1,
       "openRefreshSec": 1,
@@ -32,7 +34,7 @@
         "type": "string",
         "label": "Sites",
         "description": "Up to four hostnames (comma or space separated in shell.json). Normally edited from the widget's panel.",
-        "defaultValue": "google.com, github.com, cloudflare.com, reddit.com"
+        "defaultValue": "google.com"
       },
       {
         "key": "focusedSite",

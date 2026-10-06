@@ -6,9 +6,11 @@ import qs.Commons
 import qs.Ui
 import "PingModel.js" as Model
 
-// PingScope — bar widget + popup for the pingscope.latency plugin.
+// PingScope (pill) — bar widget + popup for the io.github.stefanoconiglio.pingscope plugin,
+// a fork of PingScope (sierrab1989/omarchy-pingscope) with a pill-shaped bar face.
 //
-// Bar face: speedometer glyph and the focused site's latency. Right-click
+// Bar face: the focused site's latency, green / yellow / red by response time,
+// on a dark pill outlined in the bar's own foreground colour. Right-click
 // cycles the focused site, middle-click samples immediately, and left-click
 // opens the panel.
 //
@@ -18,8 +20,8 @@ import "PingModel.js" as Model
 Panel {
   id: root
 
-  moduleName: "pingscope.latency"
-  ipcTarget: "pingscope.latency"
+  moduleName: "io.github.stefanoconiglio.pingscope"
+  ipcTarget: "io.github.stefanoconiglio.pingscope"
   manageIpc: false
 
   readonly property bool vertical: bar ? bar.vertical : false
@@ -39,7 +41,8 @@ Panel {
   readonly property color badLatency: "#ef4444"
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
 
-  readonly property string glyph: "󰀦"
+  // Globe, in the panel header only; the bar shows text alone.
+  readonly property string glyph: "󰖟"
 
   // ---------- settings ----------
 
@@ -94,6 +97,28 @@ Panel {
     if (status === "good") return goodLatency
     if (status === "idle") return idleColor
     return normalColor
+  }
+
+  // Bar face: a dark pill whatever the theme, so the green, yellow and red
+  // latency stays readable; it stands out from a light bar by its fill and
+  // from a dark one by its border, drawn in the bar's foreground colour (which
+  // every theme keeps in contrast with the bar).
+  readonly property color pillFill: "#18181b"
+  readonly property color pillText: "#e4e4e7"
+  readonly property color pillMuted: "#a1a1aa"
+
+  function barLabel() {
+    var label
+    if (sites.length === 0) label = "—"
+    else if (!probesRunning) label = "off"
+    else if (!focusedPinger || !focusedPinger.hasSample) label = "…"
+    else if (focusedStatus === "down") label = vertical ? "×" : "no net"
+    else {
+      var ms = Number(focusedPinger.latencyMs)
+      if (vertical) label = String(Math.round(ms))
+      else label = ms >= 1000 ? (ms / 1000).toFixed(1) + " s" : Math.round(ms) + " ms"
+    }
+    return label
   }
 
   function faceLabel() {
@@ -206,8 +231,8 @@ Panel {
   }
 
   visible: true
-  implicitWidth: vertical ? barSize : faceContent.implicitWidth + Style.space(17)
-  implicitHeight: vertical ? faceContent.implicitHeight + Style.space(12) : barSize
+  implicitWidth: vertical ? barSize : pill.width + Style.space(10)
+  implicitHeight: vertical ? pill.height + Style.space(10) : barSize
 
   onOpenedChanged: {
     if (opened) {
@@ -255,9 +280,8 @@ Panel {
 
   // ---------- bar face ----------
   //
-  // WidgetButton is text-only, so the face replicates its contract by hand:
-  // fixed geometry from the bar, click-target registration, and the shared
-  // tooltip. Glyph + latency keep stable slots as values change.
+  // Hand-made like PingScope's own face (WidgetButton draws text only): it
+  // registers as a click target and shows the bar's shared tooltip itself.
 
   Item {
     id: face
@@ -266,67 +290,32 @@ Panel {
     Component.onCompleted: if (root.bar && root.bar.registerClickTarget) root.bar.registerClickTarget(face)
     Component.onDestruction: if (root.bar && root.bar.unregisterClickTarget) root.bar.unregisterClickTarget(face)
 
-    Item {
-      id: faceContent
+    // The widest label sets the pill's width, so "9 ms" turning into
+    // "10 ms" never moves the neighbouring widgets.
+    TextMetrics {
+      id: widest
+      font: pillLabel.font
+      text: root.vertical ? "888" : "888 ms"
+    }
+
+    Rectangle {
+      id: pill
       anchors.centerIn: parent
+      width: Math.ceil(widest.width) + Style.space(14)
+      height: Math.ceil(pillLabel.implicitHeight) + Style.space(4)
+      radius: height / 2
+      color: root.pillFill
+      border.width: Math.max(1, Math.round(Style.space(1.5)))
+      border.color: root.foreground
 
-      implicitWidth: root.vertical ? columnFace.implicitWidth : rowFace.implicitWidth
-      implicitHeight: root.vertical ? columnFace.implicitHeight : rowFace.implicitHeight
-
-      Row {
-        id: rowFace
-        visible: !root.vertical
-        spacing: Style.space(5)
+      Text {
+        id: pillLabel
         anchors.centerIn: parent
-
-        Text {
-          text: root.glyph
-          color: root.foreground
-          font.family: root.fontFamily
-          font.pixelSize: Style.font.icon
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        // Fixed-width slot so "9ms" crossing into "10ms" never shoves the
-        // neighbouring widgets.
-        Item {
-          width: Style.space(34)
-          height: faceValue.implicitHeight
-          anchors.verticalCenter: parent.verticalCenter
-
-          Text {
-            id: faceValue
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            text: root.faceLabel()
-            color: root.statusColor(root.focusedStatus, root.foreground, root.muted)
-            font.family: root.fontFamily
-            font.pixelSize: Style.font.caption
-          }
-        }
-      }
-
-      Column {
-        id: columnFace
-        visible: root.vertical
-        spacing: Style.space(2)
-        anchors.centerIn: parent
-
-        Text {
-          anchors.horizontalCenter: parent.horizontalCenter
-          text: root.glyph
-          color: root.foreground
-          font.family: root.fontFamily
-          font.pixelSize: Style.font.icon
-        }
-
-        Text {
-          anchors.horizontalCenter: parent.horizontalCenter
-          text: root.faceLabel()
-          color: root.statusColor(root.focusedStatus, root.foreground, root.muted)
-          font.family: root.fontFamily
-          font.pixelSize: Style.font.caption
-        }
+        text: root.barLabel()
+        color: root.statusColor(root.focusedStatus, root.pillText, root.pillMuted)
+        font.family: root.fontFamily
+        font.pixelSize: Style.font.caption
+        font.bold: true
       }
     }
 
