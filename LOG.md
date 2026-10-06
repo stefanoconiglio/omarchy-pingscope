@@ -45,3 +45,19 @@ Request (user): a bigger font for the latency in the pill. `Style.font.title` (1
 `Style.space(2)` and its height capped at the bar's size minus 2 so it fits the 26 px bar.
 Checked on the live bar after `omarchy restart shell`: "3 ms" green and "142 ms" red
 (time.nist.gov) inside the bar's height.
+
+## 2026-10-06 18:05 CEST — Text centred in the pill
+
+Report (user): the number is not quite centred. Measured on screenshots of the live bar (pixels of
+the dark fill vs the coloured text): text 13 px from the left and 14 from the right, 3 px above
+and 4 below; the pill 0.5 px off in the 26 px bar.
+
+- Causes: anchors.centerIn centres the text's line box, which keeps room for descenders, so the
+  digits sat high; the glyphs' side bearings and whole-pixel rounding moved them sideways; a pill
+  height of the wrong parity left a half pixel in the bar.
+- Now: TextMetrics.tightBoundingRect places the ink. Horizontally that of the current label
+  (sub-pixel x, no rounding); vertically that of "888 ms" (digits), so every label keeps one
+  baseline. The pill's height has the bar's parity, its width is even.
+- Measured after `omarchy restart shell`: 3 px above and below the text in all three states;
+  "142 ms" and "no net" 5 px left and right; "3 ms" 13 / 14, the last pixel being the faint
+  anti-aliased edge of the "3"; the pill 5 px from the top and bottom of the bar.
