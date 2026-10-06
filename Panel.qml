@@ -298,11 +298,33 @@ Panel {
       text: root.vertical ? "888" : "888 ms"
     }
 
+    // The ink of the current label: centring the line box would leave the
+    // glyphs high (it keeps room for descenders) and off by bearings.
+    TextMetrics {
+      id: ink
+      font: pillLabel.font
+      text: pillLabel.text
+    }
+
+    FontMetrics {
+      id: lineMetrics
+      font: pillLabel.font
+    }
+
     Rectangle {
       id: pill
       anchors.centerIn: parent
-      width: Math.ceil(widest.width) + Style.space(14)
-      height: Math.min(root.barSize - Style.space(2), Math.ceil(pillLabel.implicitHeight) + Style.space(2))
+      // Even, like the ink of the labels measured (3 ms, 142 ms, no net),
+      // so the space left and right of them splits without a half pixel.
+      width: {
+        var w = Math.ceil(widest.width) + Style.space(14)
+        return w % 2 === 0 ? w : w + 1
+      }
+      // Same parity as the bar, so centring the pill leaves no half pixel.
+      height: {
+        var h = Math.min(root.barSize - Style.space(2), Math.ceil(lineMetrics.height) + Style.space(2))
+        return (root.barSize - h) % 2 === 0 ? h : h - 1
+      }
       radius: height / 2
       color: root.pillFill
       border.width: Math.max(1, Math.round(Style.space(1.5)))
@@ -310,7 +332,12 @@ Panel {
 
       Text {
         id: pillLabel
-        anchors.centerIn: parent
+        // Horizontally the ink of this label is centred; vertically that of
+        // the digits ("888 ms"), so every label sits on the same baseline.
+        // tightBoundingRect is relative to the baseline, at ascent below the top.
+        x: (pill.width - ink.tightBoundingRect.width) / 2 - ink.tightBoundingRect.x
+        y: Math.round((pill.height - widest.tightBoundingRect.height) / 2
+                      - widest.tightBoundingRect.y - lineMetrics.ascent)
         text: root.barLabel()
         color: root.statusColor(root.focusedStatus, root.pillText, root.pillMuted)
         font.family: root.fontFamily
