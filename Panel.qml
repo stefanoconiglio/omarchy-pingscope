@@ -6,8 +6,7 @@ import qs.Commons
 import qs.Ui
 import "PingModel.js" as Model
 
-// PingScope (pill) — bar widget + popup for the io.github.stefanoconiglio.pingscope plugin,
-// a fork of PingScope (sierrab1989/omarchy-pingscope) with a pill-shaped bar face.
+// PingScope — bar widget + popup for the pingscope.latency plugin.
 //
 // Bar face: the focused site's latency, green / yellow / red by response time,
 // on a dark pill outlined in the bar's own foreground colour. Right-click
@@ -20,8 +19,8 @@ import "PingModel.js" as Model
 Panel {
   id: root
 
-  moduleName: "io.github.stefanoconiglio.pingscope"
-  ipcTarget: "io.github.stefanoconiglio.pingscope"
+  moduleName: "pingscope.latency"
+  ipcTarget: "pingscope.latency"
   manageIpc: false
 
   readonly property bool vertical: bar ? bar.vertical : false

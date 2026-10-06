@@ -1,17 +1,3 @@
-# PingScope (pill)
-
-A fork of [PingScope](https://github.com/sierrab1989/omarchy-pingscope) (MIT) with a bar face
-that stands out on every Omarchy theme. The bar shows the focused site's latency, `58 ms` or
-`no net`, in PingScope's colours (green up to 50 ms, yellow up to 99 ms, red from 100 ms and when
-down) on a dark pill outlined in the bar's own text colour: the fill sets it off from a light bar
-and keeps the colours readable, the outline sets it off from a dark one. The pill keeps its width
-as the number changes. The panel is PingScope's, with a globe in place of the warning sign in its
-header. Plugin id `io.github.stefanoconiglio.pingscope`; default site `google.com`.
-
-The original README follows.
-
----
-
 # PingScope
 
 PingScope is an Omarchy bar widget that monitors current ICMP latency for up
