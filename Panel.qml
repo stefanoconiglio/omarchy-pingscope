@@ -50,6 +50,7 @@ Panel {
   readonly property real greenMaxMs: 50
   readonly property real redMinMs: 100
   readonly property int ipVersion: Number(setting("ipVersion", 4)) === 6 ? 6 : 4
+  readonly property int timeoutSec: Math.max(1, Number(setting("timeoutSec", 10)))
   readonly property bool probesRunning: {
     var value = setting("running", true)
     if (typeof value === "string") return value.toLowerCase() !== "false"
@@ -230,6 +231,7 @@ Panel {
       host: modelData
       intervalSec: root.opened ? root.openRefreshSec : root.closedRefreshSec
       ipVersion: root.ipVersion
+      timeoutSec: root.timeoutSec
       active: root.probesRunning
     }
   }
