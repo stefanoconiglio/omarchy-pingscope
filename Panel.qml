@@ -8,8 +8,8 @@ import "PingModel.js" as Model
 
 // PingScope — bar widget + popup for the pingscope.latency plugin.
 //
-// Bar face: the focused site's latency, green / yellow / red by response time,
-// on a dark pill outlined in the bar's own foreground colour. Right-click
+// Bar face: the focused site's latency inside a soft outline, in the bar's
+// colour, orange when slow, red at 100 ms or when down. Right-click
 // cycles the focused site, middle-click samples immediately, and left-click
 // opens the panel.
 //
@@ -99,13 +99,18 @@ Panel {
     return normalColor
   }
 
-  // Bar face: a dark pill whatever the theme, so the green, yellow and red
-  // latency stays readable; it stands out from a light bar by its fill and
-  // from a dark one by its border, drawn in the bar's foreground colour (which
-  // every theme keeps in contrast with the bar).
-  readonly property color pillFill: "#18181b"
-  readonly property color pillText: "#e4e4e7"
-  readonly property color pillMuted: "#a1a1aa"
+  // Bar face: the latency inside a soft outline in the bar's text colour, in
+  // the bar's colour when fast, orange when slow, red at 100 ms or when down
+  // (Attention.qml: the theme's own orange and red when it has them, always
+  // readable on its bar).
+  Attention { id: attention; bar: root.bar }
+
+  function faceColor(status) {
+    if (status === "bad" || status === "down") return attention.red
+    if (status === "warning") return attention.orange
+    if (status === "idle") return attention.dim
+    return attention.normal
+  }
 
   function barLabel() {
     var label
@@ -330,9 +335,9 @@ Panel {
         return (root.barSize - h) % 2 === 0 ? h : h - 1
       }
       radius: height / 2
-      color: root.pillFill
+      color: "transparent"
       border.width: Math.max(1, Math.round(Style.space(1.5)))
-      border.color: root.foreground
+      border.color: attention.outline
 
       Text {
         id: pillLabel
@@ -343,7 +348,7 @@ Panel {
         y: Math.round((pill.height - widest.tightBoundingRect.height) / 2
                       - widest.tightBoundingRect.y - lineMetrics.ascent)
         text: root.barLabel()
-        color: root.statusColor(root.focusedStatus, root.pillText, root.pillMuted)
+        color: root.faceColor(root.focusedStatus)
         font.family: root.fontFamily
         font.pixelSize: Style.font.title
         font.bold: true
