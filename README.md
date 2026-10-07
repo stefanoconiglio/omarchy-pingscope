@@ -70,6 +70,7 @@ PingScope stores its settings in the widget's entry in
   "closedRefreshSec": 1,
   "openRefreshSec": 1,
   "ipVersion": 4,
+  "timeoutSec": 10,
   "running": true
 }
 ```
@@ -81,6 +82,7 @@ PingScope stores its settings in the widget's entry in
 | `closedRefreshSec` | Probe interval while the panel is closed | `1` |
 | `openRefreshSec` | Probe interval while the panel is open | `1` |
 | `ipVersion` | Ping protocol: `4` or `6` | `4` |
+| `timeoutSec` | How long a probe waits for its reply before the site counts as down; a slower reply shows as its latency | `10` |
 | `running` | Whether probes are active | `true` |
 
 ## Updates

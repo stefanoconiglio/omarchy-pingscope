@@ -10,6 +10,10 @@ Item {
   property string host: ""
   property int intervalSec: 1
   property int ipVersion: 4
+  // How long one probe waits for its reply. Longer than the interval is fine:
+  // the next probe starts only when this one ends, so on a slow link a reply
+  // of 5 s shows as 5 s instead of as no network.
+  property int timeoutSec: 10
   property bool active: true
 
   // -1 until the first probe lands; -1 with hasSample = a failed probe.
@@ -22,7 +26,7 @@ Item {
     busy = true
     // `--` keeps a configuration value beginning with "-" from being
     // interpreted as another ping option.
-    pingProc.command = ["ping", ipVersion === 6 ? "-6" : "-4", "-n", "-c", "1", "-W", "1", "--", host]
+    pingProc.command = ["ping", ipVersion === 6 ? "-6" : "-4", "-n", "-c", "1", "-W", String(Math.max(1, timeoutSec)), "--", host]
     pingProc.running = true
   }
 
