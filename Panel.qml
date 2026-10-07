@@ -287,6 +287,9 @@ Panel {
   Item {
     id: face
     anchors.fill: parent
+    // The bar shows its shared tooltip only while the target reports itself
+    // hovered (WidgetButton's tooltipHovered); without it the tooltip never shows.
+    readonly property bool tooltipHovered: faceMouse.containsMouse
 
     Component.onCompleted: if (root.bar && root.bar.registerClickTarget) root.bar.registerClickTarget(face)
     Component.onDestruction: if (root.bar && root.bar.unregisterClickTarget) root.bar.unregisterClickTarget(face)
@@ -348,6 +351,7 @@ Panel {
     }
 
     MouseArea {
+      id: faceMouse
       anchors.fill: parent
       acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
       hoverEnabled: true
