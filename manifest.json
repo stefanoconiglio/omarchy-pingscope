@@ -24,6 +24,7 @@
       "closedRefreshSec": 1,
       "openRefreshSec": 1,
       "ipVersion": 4,
+      "timeoutSec": 10,
       "running": true
     },
     "schema": [
@@ -69,6 +70,16 @@
         "max": 6,
         "step": 2,
         "defaultValue": 4
+      },
+      {
+        "key": "timeoutSec",
+        "type": "integer",
+        "label": "Reply timeout (seconds)",
+        "min": 1,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 10,
+        "description": "How long a probe waits before the site counts as down. A slower reply shows as its latency."
       },
       {
         "key": "running",
