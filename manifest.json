@@ -22,7 +22,6 @@
       "sites": ["google.com", "github.com", "cloudflare.com", "reddit.com"],
       "focusedSite": 0,
       "closedRefreshSec": 1,
-      "openRefreshSec": 1,
       "ipVersion": 4,
       "timeoutSec": 10,
       "running": true
@@ -32,7 +31,7 @@
         "key": "sites",
         "type": "string",
         "label": "Sites",
-        "description": "Up to four hostnames (comma or space separated in shell.json). Normally edited from the widget's panel.",
+        "description": "Up to four hostnames (comma or space separated in shell.json). Edited in shell.json; the widget has no panel.",
         "defaultValue": "google.com, github.com, cloudflare.com, reddit.com"
       },
       {
@@ -47,18 +46,9 @@
       {
         "key": "closedRefreshSec",
         "type": "integer",
-        "label": "Closed refresh interval (seconds)",
+        "label": "Refresh interval (seconds)",
         "min": 1,
         "max": 60,
-        "step": 1,
-        "defaultValue": 1
-      },
-      {
-        "key": "openRefreshSec",
-        "type": "integer",
-        "label": "Open refresh interval (seconds)",
-        "min": 1,
-        "max": 10,
         "step": 1,
         "defaultValue": 1
       },
